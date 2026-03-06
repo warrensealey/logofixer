@@ -61,6 +61,13 @@ python logo_resizer.py -i logo.gif -o logo_resized.png
 python logo_resizer.py -i logo.webp -o logo_resized.png --width 180 --height 60
 ```
 
+For SVG files, convert to PNG first using a tool such as ImageMagick:
+
+```bash
+magick logo.svg logo.png
+python logo_resizer.py -i logo.png -o logo_resized.png
+```
+
 ## Installers
 
 ### Windows
@@ -87,6 +94,3 @@ python logo_resizer.py -i logo.webp -o logo_resized.png --width 180 --height 60
     ```
 
 On both platforms, the installers bundle Python and dependencies, so a separate Python installation is not required for end users.
-
-
-
