@@ -67,6 +67,10 @@ def infer_background_color(img: Image.Image) -> Color:
         # Fallback: top-left
         return pixels[0, 0]
 
+    # If any border pixel is fully transparent, treat the background as transparent.
+    if any(sample[3] == 0 for sample in samples):
+        return 0, 0, 0, 0
+
     counter: Counter[Color] = Counter(samples)
     # Most common color
     bg, _ = counter.most_common(1)[0]
@@ -105,12 +109,14 @@ def resize_logo_to_canvas(
 
     resized = img.resize((new_w, new_h), Image.LANCZOS)
 
-    # Use an opaque background derived from bg_color (ignore original alpha).
-    # If the inferred background is fully transparent, default to white.
+    # Use a background derived from bg_color.
+    # If the inferred background is fully transparent, keep the canvas transparent.
     r, g, b, a = bg_color
     if a == 0:
-        r, g, b = 255, 255, 255
-    canvas = Image.new("RGBA", (target.width, target.height), (r, g, b, 255))
+        bg = (0, 0, 0, 0)
+    else:
+        bg = (r, g, b, 255)
+    canvas = Image.new("RGBA", (target.width, target.height), bg)
 
     offset_x = (target.width - new_w) // 2
     offset_y = (target.height - new_h) // 2

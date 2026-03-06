@@ -93,8 +93,10 @@ function processImage(img) {
 
   previewCtx.save();
   previewCtx.clearRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
-  previewCtx.fillStyle = `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, 1)`;
-  previewCtx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+  if (bgColor) {
+    previewCtx.fillStyle = `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, 1)`;
+    previewCtx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+  }
 
   const offsetX = (TARGET_WIDTH - newW) / 2;
   const offsetY = (TARGET_HEIGHT - newH) / 2;
@@ -109,6 +111,7 @@ function inferBackgroundColor(ctx, width, height) {
 
   const border = Math.min(5, Math.floor(Math.min(width, height) / 2));
   const counts = new Map();
+  let hasTransparentBorder = false;
 
   function samplePixel(x, y) {
     const idx = (y * width + x) * 4;
@@ -116,8 +119,9 @@ function inferBackgroundColor(ctx, width, height) {
     const g = data[idx + 1];
     const b = data[idx + 2];
     const a = data[idx + 3];
-    // Skip fully transparent pixels to avoid sampling logos with transparent background
+    // Track fully transparent border pixels; they force a transparent background.
     if (a === 0) {
+      hasTransparentBorder = true;
       return;
     }
     const key = `${r},${g},${b}`;
@@ -152,6 +156,11 @@ function inferBackgroundColor(ctx, width, height) {
     }
   }
 
+  // If any border pixel was fully transparent, treat the background as transparent.
+  if (hasTransparentBorder) {
+    return null;
+  }
+
   let bestKey = null;
   let bestCount = -1;
   for (const [key, count] of counts.entries()) {
@@ -162,15 +171,14 @@ function inferBackgroundColor(ctx, width, height) {
   }
 
   if (!bestKey) {
-    // No non-transparent border pixels found.
-    // Look at the top-left pixel; if it is also fully transparent, default to white.
+    // Fallback: top-left pixel (may be opaque or transparent); if transparent, leave canvas transparent.
     const idx = 0;
     const r = data[idx];
     const g = data[idx + 1];
     const b = data[idx + 2];
     const a = data[idx + 3];
     if (a === 0) {
-      return { r: 255, g: 255, b: 255 };
+      return null;
     }
     return { r, g, b };
   }

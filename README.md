@@ -37,8 +37,8 @@ Behavior:
 
 - Loads the input image.
 - Scales the logo to be as large as possible while fitting inside the target width/height, preserving aspect ratio.
-- Infers a background color by sampling the borders of the original image. If the logo background is fully transparent (no solid border color), the padding/background defaults to white.
-- Fills the remaining area of the target canvas with that background color.
+- Infers a background color by sampling the borders of the original image. If any border pixel is fully transparent, the padding/background is left transparent; otherwise the inferred color is used.
+- Fills the remaining area of the target canvas with that inferred background color (or transparency if the border is transparent).
 - Centers the scaled logo on the canvas and saves the result as a PNG.
 
 ## Supported image formats
