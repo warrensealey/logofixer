@@ -105,8 +105,11 @@ def resize_logo_to_canvas(
 
     resized = img.resize((new_w, new_h), Image.LANCZOS)
 
-    # Use an opaque background derived from bg_color (ignore original alpha)
-    r, g, b, _a = bg_color
+    # Use an opaque background derived from bg_color (ignore original alpha).
+    # If the inferred background is fully transparent, default to white.
+    r, g, b, a = bg_color
+    if a == 0:
+        r, g, b = 255, 255, 255
     canvas = Image.new("RGBA", (target.width, target.height), (r, g, b, 255))
 
     offset_x = (target.width - new_w) // 2

@@ -162,11 +162,16 @@ function inferBackgroundColor(ctx, width, height) {
   }
 
   if (!bestKey) {
-    // Fallback: top-left pixel
+    // No non-transparent border pixels found.
+    // Look at the top-left pixel; if it is also fully transparent, default to white.
     const idx = 0;
     const r = data[idx];
     const g = data[idx + 1];
     const b = data[idx + 2];
+    const a = data[idx + 3];
+    if (a === 0) {
+      return { r: 255, g: 255, b: 255 };
+    }
     return { r, g, b };
   }
 
