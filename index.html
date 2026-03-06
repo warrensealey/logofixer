@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Logofixer – Logo Resizer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Logofixer</h1>
+      <p class="subtitle">
+        Upload a logo and resize it into a 150×50 area while keeping its aspect ratio.
+      </p>
+
+      <section class="controls">
+        <label for="file-input" class="file-label">
+          <span>Select logo image</span>
+          <input id="file-input" type="file" accept="image/*" />
+        </label>
+
+        <button id="process-btn" disabled>Fix logo</button>
+      </section>
+
+      <section class="preview-section">
+        <h2>Preview (150×50)</h2>
+        <canvas id="preview-canvas" width="150" height="50"></canvas>
+      </section>
+
+      <section class="download-section">
+        <button id="download-btn" disabled>Download PNG</button>
+      </section>
+
+      <p class="note">
+        All processing happens in your browser. No images are uploaded to a server.
+      </p>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+  </html>
+
